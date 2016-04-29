@@ -33,7 +33,7 @@ timer: timer.c wdt.h wdtio.o Makefile kbhit.c
 endif
  
 clean:
-	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions /dev/wdt?
+	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions /dev/wdt? Module.symvers
 
 spotless:
 	rm -rf timer Module.* *.o *~ core .depend .*.cmd *.ko *.mod.c *.order .tmp_versions /dev/wdt?
