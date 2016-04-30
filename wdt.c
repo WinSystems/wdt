@@ -1,35 +1,14 @@
-//****************************************************************************
-//
-//	Copyright 2012 by WinSystems Inc.
-//
-//	Permission is hereby granted to the purchaser of WinSystems CPU products
-//	to distribute any binary file or files compiled using this source code
-//	directly or in any work derived by the user from this file. In no case
-//	may the source code, original or derived from this file, be distributed
-//	to any third party except by explicit permission of WinSystems. This file
-//	is distributed on an "As-is" basis and no warranty as to performance or
-//	fitness of purposes is expressed or implied. In no case shall WinSystems
-//	be liable for any direct or indirect loss or damage, real or consequential
-//	resulting from the usage of this source code. It is the user's sole respon-
-//	sibility to determine fitness for any considered purpose.
-//
-//****************************************************************************
-//
-//	Name	 : wdt.c
-//
-//	Project	 : Watchdog Timer Linux Device Driver
-//
-//	Author	 : Paul DeMetrotion
-//
-//****************************************************************************
-//
-//	  Date		Revision	                Description
-//	--------	--------	---------------------------------------------
-//	04/09/12	  1.0		Original Release
-//
-//****************************************************************************
-
-static char *RCSInfo = "$Id: wdt.c, v 1.0 2012-04-09 paul Exp $";
+/*
+ * wdt.c: Watchdog Timer Linux Device Driver
+ *
+ * (C) Copyright 2012, 2016 by WinSystems, Inc.
+ * Author: Paul DeMetrotion <pdemetrotion@winsystems.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ */
 
 // #define DEBUG 1
 
@@ -52,13 +31,15 @@ static char *RCSInfo = "$Id: wdt.c, v 1.0 2012-04-09 paul Exp $";
 
 #include "wdt.h"
 
-#define MOD_DESC "WinSystems,Inc. Watchdog Timer Driver"
-MODULE_LICENSE("GPL");
+#define MOD_DESC "WinSystems, Inc. Watchdog Timer Driver"
+MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION(MOD_DESC);
 MODULE_AUTHOR("Paul DeMetrotion");
 
 // Driver major number
-static int wdt_init_major = 0;	// 0 = allocate dynamically
+static int cdev_major;      // 0 = allocate dynamically
+module_param(cdev_major, uint, S_IRUGO);
+MODULE_PARM_DESC(cdev_major, "Set the major number for wdt device (0 = auto, default)");
 static int wdt_major;
 
 // wdt char device structure
@@ -66,9 +47,11 @@ static struct cdev wdt_cdev;
 
 // This holds the base addresses of the wdt
 static unsigned base_port = 0x564;
+module_param(base_port, uint, S_IRUGO);
+MODULE_PARM_DESC(base_port, "Set the base port for the wdt device (default is 0x564)");
 
 // mutex & spinlock
-static struct mutex mtx;
+static DEFINE_MUTEX(mtx);
 
 //**********************************************************************
 //			DEVICE OPEN
@@ -185,13 +168,11 @@ int init_module()
 	dev_t devno;
 
 	// Sign-on
-	pr_info(MOD_DESC "\n");
-	pr_info("Copyright 2012, All rights reserved\n");
-	pr_info("%s\n", RCSInfo);
+	pr_info(MOD_DESC " loading\n");
 
 	// register the character device
-	if (wdt_init_major) {
-		wdt_major = wdt_init_major;
+	if (cdev_major) {
+		wdt_major = cdev_major;
 		devno = MKDEV(wdt_major, 0);
 		ret_val = register_chrdev_region(devno, 1, KBUILD_MODNAME);
 	} else {
@@ -213,14 +194,11 @@ int init_module()
 	ret_val = cdev_add(&wdt_cdev, MKDEV(wdt_major, 0), 1);
 
 	if (!ret_val) {
-		pr_info("Added character device %s\n", KBUILD_MODNAME);
+		pr_info("Added character device\n");
 	} else {
-		pr_err("Error %d adding character device %s\n", ret_val, KBUILD_MODNAME);
+		pr_err("Error %d adding character device\n", ret_val);
 		goto exit_majnum_delete;
 	}
-
-	// initialize mutex array
-	mutex_init(&mtx);
 
 	// check and map our I/O region requests
 	if (request_region(base_port, 4, KBUILD_MODNAME) == NULL) {
