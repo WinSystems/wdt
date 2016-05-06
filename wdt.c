@@ -164,7 +164,7 @@ int init_module()
 
 	pr_info("Added device @ 0x%04x\n", base_port);
 
-	device_create(wdt_class, NULL, devno, NULL, "%x", base_port);
+	device_create(wdt_class, NULL, devno, NULL, KBUILD_MODNAME);
 
 	return 0;
 
