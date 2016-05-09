@@ -79,6 +79,7 @@ static long device_ioctl(struct file *file, unsigned int ioctl_num, unsigned lon
 	switch (ioctl_num) {
 	case IOCTL_READ_WDT:
 		ret = inb(base_port + 2);
+		break;
 
 	case IOCTL_WRITE_WDT:
 		mutex_lock_interruptible(&mtx);
