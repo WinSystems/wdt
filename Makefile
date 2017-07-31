@@ -6,7 +6,7 @@ else # called from command line
 	KERNEL_VERSION = `uname -r`
 	KERNELDIR := /lib/modules/$(KERNEL_VERSION)/build
 	PWD  := $(shell pwd)
-	MODULE_INSTALLDIR = /lib/modules/$(KERNEL_VERSION)/kernel/drivers/watchdog/
+	MODULE_INSTALLDIR = /lib/modules/$(KERNEL_VERSION)/kernel/drivers/watchdog
 
 default:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
@@ -33,7 +33,7 @@ timer: timer.c wdt.h wdtio.o Makefile kbhit.c
 endif
  
 clean:
-	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions /dev/wdt? Module.symvers
+	rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions /dev/wdt?
 
 spotless:
 	rm -rf timer Module.* *.o *~ core .depend .*.cmd *.ko *.mod.c *.order .tmp_versions /dev/wdt?
