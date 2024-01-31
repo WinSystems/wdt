@@ -21,7 +21,7 @@ void close_keyboard(void);
 int kbhit(void);
 int readch(void);
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int timeout, key;
 

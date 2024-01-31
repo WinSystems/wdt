@@ -28,6 +28,9 @@ int handle = 0;
 // the names of our device nodes
 char *device_id={"/dev/wdt"};
 
+// function
+int check_handle(void);
+
 //
 //------------------------------------------------------------------------
 //

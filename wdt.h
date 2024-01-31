@@ -31,4 +31,10 @@
 // Set minutes
 #define IOCTL_SET_WDT_MIN _IOWR(IOCTL_NUM, 4, int)
 
+// io functions
+int read_wdt(void);
+int write_wdt(int value);
+int set_wdt_sec(void);
+int set_wdt_min(void);
+
 #endif /* __WDT_H */

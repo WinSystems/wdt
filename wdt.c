@@ -72,7 +72,7 @@ static int device_release(struct inode *inode, struct file *file)
 //**********************************************************************
 static long device_ioctl(struct file *file, unsigned int ioctl_num, unsigned long ioctl_param)
 {
-	int ret = 0;
+	int ret = 0, ret_val;
 
 	pr_devel("IOCTL call Code %04X\n", ioctl_num);
 
@@ -82,19 +82,19 @@ static long device_ioctl(struct file *file, unsigned int ioctl_num, unsigned lon
 		break;
 
 	case IOCTL_WRITE_WDT:
-		mutex_lock_interruptible(&mtx);
+		ret_val = mutex_lock_interruptible(&mtx);
 		outb(ioctl_param & 0xff, base_port + 2);
 		mutex_unlock(&mtx);
 		break;
 
 	case IOCTL_SET_WDT_SEC:
-		mutex_lock_interruptible(&mtx);
+		ret_val = mutex_lock_interruptible(&mtx);
 		outb(0x80, base_port + 1);
 		mutex_unlock(&mtx);
 		break;
 
 	case IOCTL_SET_WDT_MIN:
-		mutex_lock_interruptible(&mtx);
+		ret_val = mutex_lock_interruptible(&mtx);
 		outb(0, base_port + 1);
 		mutex_unlock(&mtx);
 		break;
@@ -125,7 +125,7 @@ int init_module()
 {
 	int ret_val;
 
-	wdt_class = class_create(THIS_MODULE, KBUILD_MODNAME);
+	wdt_class = class_create(KBUILD_MODNAME);
 	if (IS_ERR(wdt_class)) {
 		pr_err("Could not create module class\n");
 		return PTR_ERR(wdt_class);
