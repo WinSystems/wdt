@@ -25,10 +25,10 @@
 
 #include "wdt.h"
 
-#define MOD_DESC "WinSystems, Inc. Watchdog Timer Driver"
+#define MOD_DESC "WinSystems, Inc. Watchdog Timer Driver C460"
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION(MOD_DESC);
-MODULE_AUTHOR("Paul DeMetrotion");
+MODULE_AUTHOR("Al Hussain");
 
 // Driver major number
 static int cdev_major;      // 0 = allocate dynamically
@@ -39,7 +39,7 @@ MODULE_PARM_DESC(cdev_major, "Set the major number for wdt device (0 = auto, def
 static struct cdev wdt_cdev;
 
 // This holds the base addresses of the wdt
-static unsigned base_port = 0x564;
+static unsigned base_port = 0x264;
 module_param(base_port, uint, S_IRUGO);
 MODULE_PARM_DESC(base_port, "Set the base port for the wdt device (default is 0x564)");
 

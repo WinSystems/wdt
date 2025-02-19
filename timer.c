@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	if (argc != 3)
 	{
 		printf("Usage: timer <time> <sec/min>\n");
-		printf("Example: timer 100 sec\n");
+		printf("Example: timer 100 s\n");
 		exit(1);
 	}
 	else if(read_wdt() < 0)
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
 	while(1)
 	{
-		printf("  ***** Current count = %d *****\n", read_wdt());
+		printf("  ***** Current count = %d ***** Press \'q\' to disable wdt ***** Press any key to reset wdt *****\n", read_wdt());
 
 		if (kbhit())
 		{
